@@ -6,4 +6,4 @@ This task sets up a MySQL database called `ALX_prodev` and seeds it with sample 
 
 - `seed.py`: Contains functions to connect, create database, create table, and insert data.
 - `user_data.csv`: CSV file with sample data (already provided in the project).
-- `0-main.py`: Used to run and validate the seeding process.
+ 
