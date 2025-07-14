@@ -36,7 +36,8 @@ class TestGithubOrgClient(unittest.TestCase):
         }
         client = GithubOrgClient("test")
         self.assertEqual(
-            client._public_repos_url, "https://api.github.com/orgs/test/repos"
+            client._public_repos_url,
+            "https://api.github.com/orgs/test/repos"
         )
 
     @patch('client.get_json')
@@ -52,7 +53,8 @@ class TestGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient("test")
         repos = client.public_repos()
         self.assertEqual(
-            repos, ["repo1", "repo2", "repo3"]
+            repos,
+            ["repo1", "repo2", "repo3"]
         )
         mock_repos_url.assert_called_once()
         mock_get_json.assert_called_once()
@@ -65,7 +67,8 @@ class TestGithubOrgClient(unittest.TestCase):
         """Test has_license returns correct boolean"""
         client = GithubOrgClient("test")
         self.assertEqual(
-            client.has_license(repo, license_key), expected
+            client.has_license(repo, license_key),
+            expected
         )
 
 
