@@ -24,14 +24,20 @@ class TestGithubOrgClient(unittest.TestCase):
         mock_get_json.return_value = {"login": org_name}
         client = GithubOrgClient(org_name)
         self.assertEqual(client.org, {"login": org_name})
-        mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
+        mock_get_json.assert_called_once_with(
+            f"https://api.github.com/orgs/{org_name}"
+        )
 
     @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
     def test_public_repos_url(self, mock_org):
         """Test _public_repos_url returns expected value"""
-        mock_org.return_value = {"repos_url": "https://api.github.com/orgs/test/repos"}
+        mock_org.return_value = {
+            "repos_url": "https://api.github.com/orgs/test/repos"
+        }
         client = GithubOrgClient("test")
-        self.assertEqual(client._public_repos_url, "https://api.github.com/orgs/test/repos")
+        self.assertEqual(
+            client._public_repos_url, "https://api.github.com/orgs/test/repos"
+        )
 
     @patch('client.get_json')
     @patch('client.GithubOrgClient._public_repos_url', new_callable=PropertyMock)
@@ -97,8 +103,10 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
 class MockResponse:
     """Mocked JSON response"""
+
     def __init__(self, json_data):
         self._json_data = json_data
 
     def json(self):
+        """Return the mocked JSON data."""
         return self._json_data
