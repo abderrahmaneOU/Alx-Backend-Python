@@ -32,3 +32,8 @@ class ConversationSerializer(serializers.ModelSerializer):
     def get_messages(self, obj):
         messages = obj.messages.all()
         return MessageSerializer(messages, many=True).data
+
+    def validate(self, data):
+        if not data.get('participants'):
+            raise serializers.ValidationError("Participants field is required.")
+        return data
