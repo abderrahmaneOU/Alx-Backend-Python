@@ -8,21 +8,26 @@ from .models import User, Conversation, Message
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'display_name']
+        fields = ['user_id', 'username', 'email', 'phone_number']
 
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
+    message_body = serializers.CharField()
 
     class Meta:
         model = Message
-        fields = ['id', 'sender', 'text', 'timestamp']
+        fields = ['message_id', 'sender', 'message_body', 'sent_at', 'created_at']
 
 
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
-    messages = MessageSerializer(many=True, read_only=True)
+    messages = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
-        fields = ['id', 'participants', 'messages', 'created_at']
+        fields = ['conversation_id', 'participants', 'messages']
+
+    def get_messages(self, obj):
+        messages = obj.messages.all()
+        return MessageSerializer(messages, many=True).data
