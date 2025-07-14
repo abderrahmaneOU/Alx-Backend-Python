@@ -23,13 +23,9 @@ class TestGithubOrgClient(unittest.TestCase):
         """Test org method returns correct data"""
         mock_get_json.return_value = {"login": org_name}
         client = GithubOrgClient(org_name)
-        self.assertEqual(
-            client.org,
-            {"login": org_name}
-        )
-        mock_get_json.assert_called_once_with(
-            f"https://api.github.com/orgs/{org_name}"
-        )
+        self.assertEqual(client.org, {"login": org_name})
+        url = f"https://api.github.com/orgs/{org_name}"
+        mock_get_json.assert_called_once_with(url)
 
     @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
     def test_public_repos_url(self, mock_org):
