@@ -23,7 +23,10 @@ class TestGithubOrgClient(unittest.TestCase):
         """Test org method returns correct data"""
         mock_get_json.return_value = {"login": org_name}
         client = GithubOrgClient(org_name)
-        self.assertEqual(client.org, {"login": org_name})
+        self.assertEqual(
+            client.org,
+            {"login": org_name}
+        )
         mock_get_json.assert_called_once_with(
             f"https://api.github.com/orgs/{org_name}"
         )
@@ -72,7 +75,10 @@ class TestGithubOrgClient(unittest.TestCase):
         )
 
 
-@parameterized_class(('org_payload', 'repos_payload', 'expected_repos', 'apache2_repos'), TEST_PAYLOAD)
+@parameterized_class(
+    ('org_payload', 'repos_payload', 'expected_repos', 'apache2_repos'),
+    TEST_PAYLOAD
+)
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration tests for GithubOrgClient"""
 
@@ -82,11 +88,13 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher = patch('requests.get')
         cls.mock_get = cls.get_patcher.start()
 
-        # Configure side effect for multiple URLs
+        ORG_URL = "/orgs/google"
+        REPOS_URL = "/orgs/google/repos"
+
         def side_effect(url, *args, **kwargs):
-            if url.endswith("/orgs/google"):
+            if url.endswith(ORG_URL):
                 return MockResponse(cls.org_payload)
-            elif url.endswith("/orgs/google/repos"):
+            elif url.endswith(REPOS_URL):
                 return MockResponse(cls.repos_payload)
             return MockResponse(None)
 
@@ -100,12 +108,18 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def test_public_repos(self):
         """Test public_repos with integration setup"""
         client = GithubOrgClient("google")
-        self.assertEqual(client.public_repos(), self.expected_repos)
+        self.assertEqual(
+            client.public_repos(),
+            self.expected_repos
+        )
 
     def test_public_repos_with_license(self):
         """Test public_repos filtering by license"""
         client = GithubOrgClient("google")
-        self.assertEqual(client.public_repos(license="apache-2.0"), self.apache2_repos)
+        self.assertEqual(
+            client.public_repos(license="apache-2.0"),
+            self.apache2_repos
+        )
 
 
 class MockResponse:
