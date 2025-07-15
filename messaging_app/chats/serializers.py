@@ -10,21 +10,36 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'sender', 'content', 'timestamp']
+        fields = ['message_id', 'sender', 'message_body', 'sent_at']
+
+    def validate_message_body(self, value):
+        if not value:
+            raise serializers.ValidationError("Message body cannot be empty.")
+        return value
 
 
 class ConversationSerializer(serializers.ModelSerializer):
     participants = serializers.SlugRelatedField(
         many=True, slug_field='username', queryset=User.objects.all()
     )
-    messages = MessageSerializer(many=True, read_only=True)
+    messages = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
-        fields = ['id', 'participants', 'messages', 'created_at']
+        fields = ['conversation_id', 'participants', 'messages', 'created_at']
+
+    def get_messages(self, obj):
+        messages = obj.messages.all()
+        serializer = MessageSerializer(messages, many=True)
+        return serializer.data
+
+    def validate_participants(self, value):
+        if not value:
+            raise serializers.ValidationError("Conversation must have at least one participant.")
+        return value
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ['user_id', 'username', 'email']
