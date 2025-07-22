@@ -10,9 +10,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsParticipant
+
 class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsParticipant]
     filter_backends = [filters.SearchFilter]
     search_fields = ['participants__username']
 
@@ -29,7 +32,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsParticipant]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['sent_at']
 
