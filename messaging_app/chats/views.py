@@ -11,11 +11,15 @@ from rest_framework.response import Response
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
-    queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ['participants__username']
+
+    def get_queryset(self):
+        # Return conversations where the authenticated user is a participant
+        user = self.request.user
+        return Conversation.objects.filter(participants=user)
 
     @action(detail=False, methods=['get'])
     def status(self, request):
@@ -24,11 +28,15 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['sent_at']
+
+    def get_queryset(self):
+        # Return messages in conversations where the authenticated user is a participant
+        user = self.request.user
+        return Message.objects.filter(conversation__participants=user)
 
     @action(detail=False, methods=['get'])
     def status(self, request):
