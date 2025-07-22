@@ -11,11 +11,11 @@ from rest_framework.response import Response
 
 
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsParticipant
+from .permissions import IsParticipant, IsParticipantOfConversation
 
 class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
-    permission_classes = [IsParticipant]
+    permission_classes = [IsParticipantOfConversation]
     filter_backends = [filters.SearchFilter]
     search_fields = ['participants__username']
 
@@ -32,7 +32,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
-    permission_classes = [IsParticipant]
+    permission_classes = [IsParticipantOfConversation]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['sent_at']
 
