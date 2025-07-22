@@ -21,7 +21,17 @@ class IsParticipantOfConversation(permissions.BasePermission):
 
     def has_permission(self, request, view):
         # Allow access only to authenticated users
-        return request.user and request.user.is_authenticated
+        if not (request.user and request.user.is_authenticated):
+            return False
+        # Allow safe methods for authenticated users
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        # For unsafe methods, check if user is participant of the conversation
+        conversation_id = view.kwargs.get('conversation_pk') or view.kwargs.get('conversation_id')
+        if not conversation_id:
+            return False
+        # Additional permission checks can be done in has_object_permission
+        return True
 
     def has_object_permission(self, request, view, obj):
         # Check if the user is a participant of the conversation or message

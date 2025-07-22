@@ -13,6 +13,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsParticipant, IsParticipantOfConversation
 
+from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
+
 class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     permission_classes = [IsParticipantOfConversation]
@@ -23,6 +26,15 @@ class ConversationViewSet(viewsets.ModelViewSet):
         # Return conversations where the authenticated user is a participant
         user = self.request.user
         return Conversation.objects.filter(participants=user)
+
+    def check_permissions(self, request):
+        super().check_permissions(request)
+        # Check if conversation_id is in the request for unsafe methods
+        if request.method not in ['GET', 'HEAD', 'OPTIONS']:
+            conversation_id = self.kwargs.get('pk') or self.kwargs.get('conversation_id')
+            if conversation_id:
+                if not Conversation.objects.filter(id=conversation_id, participants=request.user).exists():
+                    raise PermissionDenied(detail="You do not have permission to modify this conversation.")
 
     @action(detail=False, methods=['get'])
     def status(self, request):
@@ -40,6 +52,15 @@ class MessageViewSet(viewsets.ModelViewSet):
         # Return messages in conversations where the authenticated user is a participant
         user = self.request.user
         return Message.objects.filter(conversation__participants=user)
+
+    def check_permissions(self, request):
+        super().check_permissions(request)
+        # Check if conversation_id is in the request for unsafe methods
+        if request.method not in ['GET', 'HEAD', 'OPTIONS']:
+            conversation_id = request.data.get('conversation_id') or self.kwargs.get('conversation_id')
+            if conversation_id:
+                if not Conversation.objects.filter(id=conversation_id, participants=request.user).exists():
+                    raise PermissionDenied(detail="You do not have permission to modify messages in this conversation.")
 
     @action(detail=False, methods=['get'])
     def status(self, request):
