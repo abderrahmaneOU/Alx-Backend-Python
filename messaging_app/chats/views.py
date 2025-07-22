@@ -15,6 +15,7 @@ from .permissions import IsParticipant, IsParticipantOfConversation
 
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
+from rest_framework import status
 
 class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
@@ -34,7 +35,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
             conversation_id = self.kwargs.get('pk') or self.kwargs.get('conversation_id')
             if conversation_id:
                 if not Conversation.objects.filter(id=conversation_id, participants=request.user).exists():
-                    raise PermissionDenied(detail="You do not have permission to modify this conversation.")
+                    raise PermissionDenied(detail="You do not have permission to modify this conversation.", code=status.HTTP_403_FORBIDDEN)
 
     @action(detail=False, methods=['get'])
     def status(self, request):
@@ -60,7 +61,7 @@ class MessageViewSet(viewsets.ModelViewSet):
             conversation_id = request.data.get('conversation_id') or self.kwargs.get('conversation_id')
             if conversation_id:
                 if not Conversation.objects.filter(id=conversation_id, participants=request.user).exists():
-                    raise PermissionDenied(detail="You do not have permission to modify messages in this conversation.")
+                    raise PermissionDenied(detail="You do not have permission to modify messages in this conversation.", code=status.HTTP_403_FORBIDDEN)
 
     @action(detail=False, methods=['get'])
     def status(self, request):

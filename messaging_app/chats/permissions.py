@@ -26,12 +26,15 @@ class IsParticipantOfConversation(permissions.BasePermission):
         # Allow safe methods for authenticated users
         if request.method in permissions.SAFE_METHODS:
             return True
-        # For unsafe methods, check if user is participant of the conversation
-        conversation_id = view.kwargs.get('conversation_pk') or view.kwargs.get('conversation_id')
-        if not conversation_id:
-            return False
-        # Additional permission checks can be done in has_object_permission
-        return True
+        # Explicitly check for PUT, PATCH, DELETE methods
+        if request.method in ["PUT", "PATCH", "DELETE"]:
+            conversation_id = view.kwargs.get('conversation_pk') or view.kwargs.get('conversation_id')
+            if not conversation_id:
+                return False
+            # Additional permission checks can be done in has_object_permission
+            return True
+        # For other methods, deny access
+        return False
 
     def has_object_permission(self, request, view, obj):
         # Check if the user is a participant of the conversation or message
