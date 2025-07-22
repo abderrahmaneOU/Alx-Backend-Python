@@ -43,10 +43,16 @@ class ConversationViewSet(viewsets.ModelViewSet):
         return Response({'status': 'ConversationViewSet is active', 'count': count})
 
 
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import MessageFilter
+from .pagination import MessagePagination
+
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [IsParticipantOfConversation]
-    filter_backends = [filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = MessageFilter
+    pagination_class = MessagePagination
     ordering_fields = ['sent_at']
 
     def get_queryset(self):
