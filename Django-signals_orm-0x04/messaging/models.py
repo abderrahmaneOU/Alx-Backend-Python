@@ -10,6 +10,10 @@ class Message(models.Model):
     parent_message = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
     read = models.BooleanField(default=False)
 
+    @property
+    def unread(self):
+        return not self.read
+
     def __str__(self):
         return f"From {self.sender} to {self.receiver}: {self.content[:20]}"
 
@@ -31,6 +35,3 @@ class MessageHistory(models.Model):
     def __str__(self):
         return f"History for Message ID: {self.message.id} at {self.edited_at} by {self.edited_by.username if self.edited_by else 'Unknown'}"
 
-class UnreadMessagesManager(models.Manager):
-    def for_user(self, user):
-        return self.get_queryset().filter(receiver=user, read=False).only('id', 'sender', 'content', 'timestamp')
