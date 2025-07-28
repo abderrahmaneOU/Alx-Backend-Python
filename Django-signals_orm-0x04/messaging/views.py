@@ -8,8 +8,8 @@ from .models import Message
 @cache_page(60)
 @login_required
 def unread_inbox(request):
-    # Use the custom manager to get unread messages for the user, optimized with .only()
-    unread_messages = Message.objects.filter(receiver=request.user, read=False).only('id', 'sender', 'content', 'timestamp').select_related('sender')
+    # Use the classmethod to get unread messages for the user, optimized with .only()
+    unread_messages = Message.unread.unread_for_user(request.user).only('id', 'sender', 'content', 'timestamp').select_related('sender')
     return render(request, 'messaging/unread_inbox.html', {'unread_messages': unread_messages})
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required

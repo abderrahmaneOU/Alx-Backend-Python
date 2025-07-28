@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Message(models.Model):
+    @classmethod
+    def unread_for_user(cls, user):
+        return cls.objects.filter(receiver=user, read=False)
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
     receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
     content = models.TextField()
