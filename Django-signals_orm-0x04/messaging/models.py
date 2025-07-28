@@ -26,9 +26,10 @@ class MessageHistory(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='history')
     old_content = models.TextField()
     edited_at = models.DateTimeField(auto_now_add=True)
+    edited_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='edited_histories')
 
     def __str__(self):
-        return f"History for Message ID: {self.message.id} at {self.edited_at}"
+        return f"History for Message ID: {self.message.id} at {self.edited_at} by {self.edited_by.username if self.edited_by else 'Unknown'}"
 
 class UnreadMessagesManager(models.Manager):
     def for_user(self, user):
