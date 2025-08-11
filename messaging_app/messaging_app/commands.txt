@@ -1,0 +1,3 @@
+kubectl apply -f ingress.yaml
+# or, from repo root:
+kubectl apply -f messaging_app/ingress.yaml
