@@ -7,6 +7,10 @@ pipeline {
         stage('Checkout') {
             steps {
                 git credentialsId: 'YOUR_GITHUB_CREDENTIALS_ID', url: 'https://github.com/abderrahmaneOU/Alx-Backend-Python.git'
+            }
+        }
+        stage('Check Git Branch') {
+            steps {
                 sh 'git branch'
             }
         }
@@ -17,6 +21,12 @@ pipeline {
                 sh 'pip3 install -r messaging_app/requirements.txt'
                 sh './venv/bin/pip install --upgrade pip'
                 sh './venv/bin/pip install -r messaging_app/requirements.txt'
+            }
+        }
+        stage('Install with pip3') {
+            steps {
+                sh 'pip3 install --upgrade pip'
+                sh 'pip3 install -r messaging_app/requirements.txt'
             }
         }
         stage('Run Tests') {
