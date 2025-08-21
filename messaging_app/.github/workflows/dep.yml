@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'messaging_app/**'
+      - "messaging_app/**"
 
 jobs:
   build-and-push:
